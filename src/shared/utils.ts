@@ -1,0 +1,38 @@
+export const ObjectTags = {
+  Number: '[object Number]',
+  String: '[object String]',
+  Boolean: '[object Boolean]',
+  Symbol: '[object Symbol]',
+  BigInt: '[object BigInt]',
+  Date: '[object Date]',
+  RegExp: '[object RegExp]',
+  Array: '[object Array]',
+  Map: '[object Map]',
+  Set: '[object Set]',
+  ArrayBuffer: '[object ArrayBuffer]',
+  SharedArrayBuffer: '[object SharedArrayBuffer]',
+  DataView: '[object DataView]',
+  Int8Array: '[object Int8Array]',
+  Uint8Array: '[object Uint8Array]',
+  Uint8ClampedArray: '[object Uint8ClampedArray]',
+  Int16Array: '[object Int16Array]',
+  Uint16Array: '[object Uint16Array]',
+  Int32Array: '[object Int32Array]',
+  Float32Array: '[object Float32Array]',
+  Float64Array: '[object Float64Array]',
+  BigInt64Array: '[object BigInt64Array]',
+  BigUint64Array: '[object BigUint64Array]',
+  Error: '[object Error]',
+  Function: '[object Function]',
+  AsyncFunction: '[object AsyncFunction]',
+  GeneratorFunction: '[object GeneratorFunction]',
+  Promise: '[object Promise]',
+  WeakMap: '[object WeakMap]',
+  WeakSet: '[object WeakSet]',
+  Arguments: '[object Arguments]',
+  Object: '[object Object]',
+} as const;
+
+export const getObjectTag = (obj: unknown) => {
+  return Object.prototype.toString.call(obj);
+};
