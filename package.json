@@ -1,7 +1,7 @@
 {
   "name": "@zestlet/fp",
-  "version": "0.0.3",
-  "description": "Core utilities for Dashlet",
+  "version": "0.0.4",
+  "description": "TypeScript functional programming library with over 70% AI-generated code, featuring precise type inference and currying support",
   "publishConfig": {
     "access": "public",
     "tag": "latest",
@@ -9,8 +9,18 @@
   },
   "keywords": [
     "typescript",
+    "functional-programming",
+    "fp",
+    "currying",
+    "point-free",
+    "immutable",
+    "type-safe",
     "utilities",
-    "tools"
+    "data-last",
+    "composition",
+    "ai-generated",
+    "ai-assisted-development",
+    "llm-generated"
   ],
   "author": "vowdemon",
   "license": "MIT",
