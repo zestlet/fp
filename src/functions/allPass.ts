@@ -1,6 +1,7 @@
 import { curry } from './curry';
 import { Predicate } from '../shared/types/Common';
 import { ArrayContainer } from '../shared/types/Array';
+import { AnyFunction, GenericFunction } from '../shared/types/Function';
 
 function allPassImpl<T>(predicates: ArrayContainer<Predicate<T>>, value: T): boolean {
   return predicates.every(predicate => predicate(value));
@@ -21,5 +22,5 @@ function allPassImpl<T>(predicates: ArrayContainer<Predicate<T>>, value: T): boo
  */
 export const allPass = curry(allPassImpl) as {
   <T>(predicates: ArrayContainer<Predicate<T>>, value: T): boolean;
-  <T1>(predicates: ArrayContainer<Predicate<T1>>): <T2 extends T1>(value: T2) => boolean;
+  <T1 extends ArrayContainer<Predicate<any>>>(predicates: T1): <U>(value: Parameters<T1[number]>[0] & U) => boolean;
 };

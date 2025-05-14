@@ -19,5 +19,5 @@ function filterImpl<T>(predicate: ArrayPredicate<T>, array: ArrayContainer<T>): 
  */
 export const filter = curry(filterImpl) as {
   <T>(predicate: ArrayPredicate<T>, array: ArrayContainer<T>): T[];
-  <T>(predicate: ArrayPredicate<T>): <T2 extends T>(array: ArrayContainer<T2>) => T2[];
+  <Fn extends ArrayPredicate<any>>(predicate: Fn): <T2 extends Parameters<Fn>[0]>(array: ArrayContainer<T2>) => T2[];
 };

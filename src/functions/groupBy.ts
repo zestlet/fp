@@ -30,5 +30,7 @@ function groupByImpl<T, K extends PropertyKey>(callbackFn: ArrayCallback<T, K>, 
  */
 export const groupBy = curry(groupByImpl) as {
   <T, K extends PropertyKey>(callbackFn: ArrayCallback<T, K>, array: ArrayContainer<T>): Record<K, T[]>;
-  <T, K extends PropertyKey>(callbackFn: ArrayCallback<T, K>): <T2 extends T>(array: ArrayContainer<T2>) => Record<K, T2[]>;
+  <Fn extends ArrayCallback<any, PropertyKey>>(
+    callbackFn: Fn
+  ): <T extends Parameters<Fn>[0], K extends ReturnType<Fn>>(array: ArrayContainer<T>) => Record<K, T[]>;
 };

@@ -3,7 +3,7 @@ import { ArrayContainer } from '../shared/types/Array';
 import { ArrayFlatten } from '../shared/types/ArrayFlatten';
 
 function flattenImpl<T, Depth extends number>(n: Depth, array: ArrayContainer<T>): ArrayFlatten<T, Depth> {
-  return array.flat(n) as ArrayFlatten<T, Depth>;
+  return array.flat(n) as any;
 }
 
 /**
@@ -20,6 +20,6 @@ function flattenImpl<T, Depth extends number>(n: Depth, array: ArrayContainer<T>
  * flatten(1)(array); // [1, 2, [3, [4]], 5]
  */
 export const flatten = curry(flattenImpl) as {
-  <T, Depth extends number>(n: Depth, array: ArrayContainer<T>): ArrayFlatten<T, Depth>;
-  <T, Depth extends number>(n: Depth): (array: ArrayContainer<T>) => ArrayFlatten<T, Depth>;
+  <T, const Depth extends number>(n: Depth, array: ArrayContainer<T>): ArrayFlatten<T, Depth>;
+  <T, const Depth extends number>(n: Depth): (array: ArrayContainer<T>) => ArrayFlatten<T, Depth>;
 };

@@ -41,7 +41,7 @@ describe('groupBy', () => {
       { id: 2, type: 'b' },
       { id: 3, type: 'a' },
     ] as const;
-    const groupByType = groupBy((item: { type: 'a' | 'b' }) => item.type);
+    const groupByType = groupBy(item => item.type);
     expect(groupByType(array)).toEqual({
       a: [
         { id: 1, type: 'a' },
