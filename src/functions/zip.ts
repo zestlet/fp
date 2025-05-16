@@ -1,6 +1,16 @@
 import { ArrayContainer } from '../shared/types/Array';
 import { curry } from './curry';
 
+export type Zip<A extends readonly unknown[], B extends readonly unknown[]> = A extends readonly []
+  ? []
+  : B extends readonly []
+    ? []
+    : A extends readonly [infer AHead, ...infer ATail]
+      ? B extends readonly [infer BHead, ...infer BTail]
+        ? [[AHead, BHead], ...Zip<ATail, BTail>]
+        : []
+      : [];
+
 function zipImpl<const T, const U>(array2: ArrayContainer<U>, array1: ArrayContainer<T>): [T, U][] {
   const length = Math.min(array1.length, array2.length);
   const result: [T, U][] = [];
@@ -24,6 +34,6 @@ function zipImpl<const T, const U>(array2: ArrayContainer<U>, array1: ArrayConta
  * zip(array1)(array2); // [[1, 'a'], [2, 'b'], [3, 'c']]
  */
 export const zip = curry(zipImpl) as {
-  <const T, const U>(array1: ArrayContainer<T>, array2: ArrayContainer<U>): [T, U][];
-  <const T>(array1: ArrayContainer<T>): <const U>(array2: ArrayContainer<U>) => [T, U][];
+  <const T extends ArrayContainer, const U extends ArrayContainer>(array2: U, array1: T): Zip<T, U>;
+  <const U extends ArrayContainer>(array2: U): <const T extends ArrayContainer>(array1: T) => Zip<T, U>;
 };

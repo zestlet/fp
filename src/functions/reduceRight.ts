@@ -1,7 +1,7 @@
 import { curry } from './curry';
 import { ArrayContainer, ArrayReducer } from '../shared/types/Array';
 
-function reduceRightImpl<T, A>(reducer: ArrayReducer<A, T, ArrayContainer<T>, A>, initialValue: A, array: ArrayContainer<T>): A {
+function reduceRightImpl<T, A>(reducer: ArrayReducer<A, T>, initialValue: A, array: ArrayContainer<T>): A {
   let acc = initialValue;
   for (let i = array.length - 1; i >= 0; i--) {
     acc = reducer(acc, array[i], i, array);
@@ -23,10 +23,10 @@ function reduceRightImpl<T, A>(reducer: ArrayReducer<A, T, ArrayContainer<T>, A>
  * reduceRight((acc, val) => acc + val, 0)(array); // 15
  */
 export const reduceRight = curry(reduceRightImpl) as {
-  <T, A>(reducer: ArrayReducer<A, T, ArrayContainer<T>, A>, initialValue: A, array: ArrayContainer<T>): A;
-  <T, A>(reducer: ArrayReducer<A, T, ArrayContainer<T>, A>, initialValue: A): <T2 extends T>(array: ArrayContainer<T2>) => A;
+  <T, A>(reducer: ArrayReducer<A, T>, initialValue: A, array: ArrayContainer<T>): A;
+  <T, A>(reducer: ArrayReducer<A, T>, initialValue: A): <T2 extends T>(array: ArrayContainer<T2>) => A;
   <T, A>(
-    reducer: ArrayReducer<A, T, ArrayContainer<T>, A>
+    reducer: ArrayReducer<A, T>
   ): {
     <T2 extends T, A2 extends A>(initialValue: A, array: ArrayContainer<T2>): A2 | A;
     <const A2 extends A>(initialValue: A2): <T2 extends T>(array: ArrayContainer<T2>) => A2 | A;

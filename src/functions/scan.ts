@@ -1,7 +1,7 @@
 import { curry } from './curry';
 import { ArrayContainer, ArrayReducer } from '../shared/types/Array';
 
-function scanImpl<T, A>(reducer: ArrayReducer<A, T, ArrayContainer<T>, A>, initialValue: A, array: ArrayContainer<T>): A[] {
+function scanImpl<T, A>(reducer: ArrayReducer<A, T>, initialValue: A, array: ArrayContainer<T>): A[] {
   const result: A[] = [initialValue];
   let accumulator: A = initialValue;
 
@@ -27,10 +27,10 @@ function scanImpl<T, A>(reducer: ArrayReducer<A, T, ArrayContainer<T>, A>, initi
  * scan((acc, curr) => acc + curr, 0)(numbers); // [0, 1, 3, 6, 10, 15]
  */
 export const scan = curry(scanImpl) as {
-  <T, A>(reducer: ArrayReducer<A, T, ArrayContainer<T>, A>, initialValue: A, array: ArrayContainer<T>): A[];
-  <T, A>(reducer: ArrayReducer<A, T, ArrayContainer<T>, A>, initialValue: A): <T2 extends T>(array: ArrayContainer<T2>) => A[];
+  <T, A>(reducer: ArrayReducer<A, T>, initialValue: A, array: ArrayContainer<T>): A[];
+  <T, A>(reducer: ArrayReducer<A, T>, initialValue: A): <T2 extends T>(array: ArrayContainer<T2>) => A[];
   <T, A>(
-    reducer: ArrayReducer<A, T, ArrayContainer<T>, A>
+    reducer: ArrayReducer<A, T>
   ): {
     <T2 extends T, A2 extends A>(initialValue: A, array: ArrayContainer<T2>): (A2 | A)[];
     <const A2 extends A>(initialValue: A2): <T2 extends T>(array: ArrayContainer<T2>) => (A2 | A)[];

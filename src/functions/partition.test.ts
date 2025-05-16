@@ -2,46 +2,95 @@ import { describe, it, expect } from 'vitest';
 import { partition } from './partition';
 
 describe('partition', () => {
-  it('应该根据断言函数将数组分成两部分', () => {
-    const array = [1, 2, 3, 4, 5];
-    const predicate = (x: number) => x % 2 === 0;
-    expect(partition(predicate, array)).toEqual([
-      [2, 4],
-      [1, 3, 5],
-    ]);
+  interface TestObject {
+    name: string;
+    age: number;
+    active: boolean;
+    email: string;
+  }
+
+  const testObj: TestObject = {
+    name: 'Alice',
+    age: 25,
+    active: true,
+    email: 'alice@example.com',
+  };
+
+  it('基本用法', () => {
+    const [picked, omitted] = partition(['name', 'age'], testObj);
+
+    expect(picked).toEqual({
+      name: 'Alice',
+      age: 25,
+    });
+
+    expect(omitted).toEqual({
+      active: true,
+      email: 'alice@example.com',
+    });
   });
 
-  it('当数组为空时应该返回两个空数组', () => {
-    const array: number[] = [];
-    const predicate = (x: number) => x % 2 === 0;
-    expect(partition(predicate, array)).toEqual([[], []]);
+  it('柯里化用法', () => {
+    const partitionByNameAndAge = partition(['name', 'age']);
+    const [picked, omitted] = partitionByNameAndAge(testObj);
+
+    expect(picked).toEqual({
+      name: 'Alice',
+      age: 25,
+    });
+
+    expect(omitted).toEqual({
+      active: true,
+      email: 'alice@example.com',
+    });
   });
 
-  it('当所有元素都满足条件时应该返回完整数组和空数组', () => {
-    const array = [2, 4, 6, 8];
-    const predicate = (x: number) => x % 2 === 0;
-    expect(partition(predicate, array)).toEqual([[2, 4, 6, 8], []]);
+  it('空属性列表', () => {
+    const [picked, omitted] = partition([], testObj);
+
+    expect(picked).toEqual({});
+    expect(omitted).toEqual(testObj);
   });
 
-  it('当没有元素满足条件时应该返回空数组和完整数组', () => {
-    const array = [1, 3, 5, 7];
-    const predicate = (x: number) => x % 2 === 0;
-    expect(partition(predicate, array)).toEqual([[], [1, 3, 5, 7]]);
+  it('部分属性', () => {
+    const [picked, omitted] = partition(['name'], testObj);
+
+    expect(picked).toEqual({
+      name: 'Alice',
+    });
+
+    expect(omitted).toEqual({
+      age: 25,
+      active: true,
+      email: 'alice@example.com',
+    });
   });
 
-  it('应该支持对象数组', () => {
-    const array = [{ x: 1 }, { x: 2 }, { x: 3 }];
-    const predicate = (item: { x: number }) => item.x % 2 === 0;
-    expect(partition(predicate, array)).toEqual([[{ x: 2 }], [{ x: 1 }, { x: 3 }]]);
+  it('不存在的属性', () => {
+    const [picked, omitted] = partition(['nonExistent' as keyof TestObject], testObj);
+
+    expect(picked).toEqual({});
+    expect(omitted).toEqual(testObj);
   });
 
-  it('应该支持柯里化调用', () => {
-    const array = [1, 2, 3, 4, 5];
-    const predicate = (x: number) => x % 2 === 0;
-    const partitionEven = partition(predicate);
-    expect(partitionEven(array)).toEqual([
-      [2, 4],
-      [1, 3, 5],
-    ]);
+  it('多个不存在的属性', () => {
+    const [picked, omitted] = partition(['nonExistent1' as keyof TestObject, 'nonExistent2' as keyof TestObject], testObj);
+
+    expect(picked).toEqual({});
+    expect(omitted).toEqual(testObj);
+  });
+
+  it('混合存在和不存在的属性', () => {
+    const [picked, omitted] = partition(['name', 'nonExistent' as keyof TestObject], testObj);
+
+    expect(picked).toEqual({
+      name: 'Alice',
+    });
+
+    expect(omitted).toEqual({
+      age: 25,
+      active: true,
+      email: 'alice@example.com',
+    });
   });
 });

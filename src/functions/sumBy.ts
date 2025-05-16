@@ -18,6 +18,6 @@ function sumByImpl<T, U extends number>(fn: (value: T) => U, array: ArrayContain
  * sumBy(item => item.value * 2)(array); // => 12
  */
 export const sumBy = curry(sumByImpl) as {
-  <T, U extends number>(fn: (value: T) => U, array: ArrayContainer<T>): number;
-  <T, U extends number>(fn: (value: T) => U): <T2 extends T>(array: ArrayContainer<T2>) => number;
+  <T>(fn: (value: T) => number, array: ArrayContainer<T>): number;
+  <T>(fn: (value: T) => number): <T2 extends T>(array: ArrayContainer<T2>) => number;
 };

@@ -1,32 +1,34 @@
 import { curry } from './curry';
-import { ArrayContainer } from '../shared/types/Array';
 
-function partitionImpl<T>(predicate: (value: T, index: number, array: ArrayContainer<T>) => boolean, array: ArrayContainer<T>): [T[], T[]] {
-  const left: T[] = [];
-  const right: T[] = [];
-  for (let i = 0; i < array.length; i++) {
-    if (predicate(array[i], i, array)) {
-      left.push(array[i]);
-    } else {
-      right.push(array[i]);
+function partitionImpl<T extends object, K extends keyof T>(pickProps: readonly K[], obj: T): [Pick<T, K>, Omit<T, K>] {
+  const picked = {} as Pick<T, K>;
+  const omitted = { ...obj } as T;
+
+  for (const key of pickProps) {
+    if (key in obj) {
+      picked[key] = obj[key];
+      delete omitted[key];
     }
   }
-  return [left, right];
+
+  return [picked, omitted as Omit<T, K>];
 }
 
 /**
- * Partitions the array into two arrays based on the predicate function
- *
- * @category Array
- * @param predicate - The predicate function to test each element
- * @param array - The array to partition
- * @returns Returns a tuple containing two arrays: [elements that satisfy the predicate, elements that don't]
+ * Splits an object into two parts based on the specified property list
+ * @category Object
+ * @param {readonly PropertyKey[]} pickProps - List of properties to keep
+ * @param {T} obj - Object to split
+ * @returns {[Pick<T, K>, Omit<T, K>]} A tuple containing two objects, first with picked properties, second with omitted properties
  * @example
- * const array = [1, 2, 3, 4, 5];
- * partition(x => x % 2 === 0, array); // [[2, 4], [1, 3, 5]]
- * partition(x => x % 2 === 0)(array); // [[2, 4], [1, 3, 5]]
+ * ```ts
+ * const obj = { a: 1, b: 2, c: 3 };
+ * const [picked, omitted] = partition(['a', 'b'], obj);
+ * // picked = { a: 1, b: 2 }
+ * // omitted = { c: 3 }
+ * ```
  */
 export const partition = curry(partitionImpl) as {
-  <T>(predicate: (value: T, index: number, array: ArrayContainer<T>) => boolean, array: ArrayContainer<T>): [T[], T[]];
-  <T>(predicate: (value: T, index: number, array: ArrayContainer<T>) => boolean): <T2 extends T>(array: ArrayContainer<T2>) => [T2[], T2[]];
+  <T extends object, K extends keyof T>(pickProps: readonly K[], obj: T): [Pick<T, K>, Omit<T, K>];
+  <K extends PropertyKey>(pickProps: readonly K[]): <T extends object & { [P in K]?: any }>(obj: T) => [Pick<T, K>, Omit<T, K>];
 };

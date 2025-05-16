@@ -23,5 +23,5 @@ function sortByImpl<T, U>(fn: (item: T) => U, array: ArrayContainer<T>): T[] {
  */
 export const sortBy = curry(sortByImpl) as {
   <T, U>(fn: (item: T) => U, array: ArrayContainer<T>): T[];
-  <T, U>(fn: (item: T) => U): <T2 extends T>(array: ArrayContainer<T2>) => T2[];
+  <T, U>(fn: (item: T) => U): (array: ArrayContainer<T>) => T[];
 };

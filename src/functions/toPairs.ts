@@ -1,16 +1,12 @@
-import { Prettify } from '../shared/types/Common';
-
 // type ObjectEntries<T> = Prettify<
 //   {
 //     [K in keyof T]: [K, T[K]];
 //   }[keyof T][]
 // >;
 
-type ObjectEntriesWithOptional<T> = Prettify<
-  {
-    [K in keyof T]-?: [K, T[K] extends undefined ? undefined : T[K]];
-  }[keyof T][]
->;
+type ObjectEntriesWithOptional<T> = {
+  [K in keyof T]-?: [K, T[K] extends undefined ? undefined : T[K]];
+}[keyof T][];
 
 function toPairsImpl<const T extends Record<PropertyKey, any>>(obj: T): ObjectEntriesWithOptional<T> {
   return Object.entries(obj);

@@ -1,16 +1,30 @@
 import { ArrayContainer } from '../shared/types/Array';
-import { PathValue } from '../shared/types/Object';
+
 import { curry } from './curry';
 
-function pathImpl<T, const P extends ArrayContainer<PropertyKey>, D>(path: P, obj: T): PathValue<T, P, D> {
-  if (path.length === 0) return obj as PathValue<T, P, D>;
-  if (obj == null) return undefined as PathValue<T, P, D>;
+export type GetPathValue<T, P extends readonly PropertyKey[], D = unknown> = P extends readonly []
+  ? T
+  : P extends readonly [infer Head, ...infer Tail extends readonly PropertyKey[]]
+    ? Head extends keyof T
+      ? GetPathValue<T[Head], Tail, D>
+      : T extends readonly any[]
+        ? Head extends number
+          ? T[Head & number] extends infer ElementOrUndefined
+            ? GetPathValue<ElementOrUndefined, Tail, D>
+            : D
+          : D
+        : D
+    : D;
+
+function pathImpl<T, const P extends ArrayContainer<PropertyKey>, D>(path: P, obj: T): GetPathValue<T, P, D> {
+  if (path.length === 0) return obj as GetPathValue<T, P, D>;
+  if (obj == null) return undefined as GetPathValue<T, P, D>;
 
   const [head, ...tail] = path;
-  if (!(head in (obj as object))) return undefined as PathValue<T, P, D>;
+  if (!(head in (obj as object))) return undefined as GetPathValue<T, P, D>;
 
   const value = (obj as Record<PropertyKey, unknown>)[head];
-  return pathImpl(tail, value) as PathValue<T, P, D>;
+  return pathImpl(tail, value) as GetPathValue<T, P, D>;
 }
 
 /**
@@ -30,6 +44,6 @@ function pathImpl<T, const P extends ArrayContainer<PropertyKey>, D>(path: P, ob
  * path([Symbol('test')], obj2); // 'symbol'
  */
 export const path = curry(pathImpl) as {
-  <T, const P extends ArrayContainer<PropertyKey>, D>(path: P, obj: T): PathValue<T, P, D>;
-  <const P extends ArrayContainer<PropertyKey>>(path: P): <T, D>(obj: T) => PathValue<T, P, D>;
+  <T, const P extends ArrayContainer<PropertyKey>, D>(path: P, obj: T): GetPathValue<T, P, D>;
+  <const P extends ArrayContainer<PropertyKey>>(path: P): <T, D>(obj: T) => GetPathValue<T, P, D>;
 };

@@ -18,6 +18,12 @@ function propImpl<T extends Record<PropertyKey, unknown>, const K extends keyof 
  */
 export const prop = curry(propImpl) as {
   <T, const K extends keyof T>(key: K, obj: T): T[K];
-  <const K extends PropertyKey>(key: K): <T, const K2 extends keyof T & K>(obj: T) => T[K2];
+  <const K extends PropertyKey>(key: K): <T, const K2 extends keyof T & K>(obj: T) => K2 extends keyof T ? T[K2] : never;
+  <const T extends object, const K extends keyof T>(key: K): (obj: T) => T[K];
+  <T extends object>(): {
+    <const K extends keyof T>(key: K, obj: T): T[K];
+    <const K extends keyof T>(key: K): (obj: T) => T[K];
+  };
+
   // <const K extends PropertyKey, const T extends Record<K, any>>(key: K): <T2 extends T>(obj: T2) => T2[K];
 };

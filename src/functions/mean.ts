@@ -1,7 +1,7 @@
 import { ArrayContainer } from '../shared/types/Array';
 
 function meanImpl<T extends number>(array: ArrayContainer<T>): number {
-  if (array.length === 0) return NaN;
+  if (array.length === 0) return 0;
   return array.reduce((sum, num) => sum + num, 0) / array.length;
 }
 

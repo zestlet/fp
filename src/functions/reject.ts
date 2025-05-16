@@ -26,5 +26,5 @@ function rejectImpl<T>(predicate: ArrayPredicate<T>, array: ArrayContainer<T>): 
  */
 export const reject = curry(rejectImpl) as {
   <T>(predicate: ArrayPredicate<T>, array: ArrayContainer<T>): T[];
-  <T>(predicate: ArrayPredicate<T>): <T2 extends T>(array: ArrayContainer<T2>) => T2[];
+  <T>(predicate: ArrayPredicate<T>): (array: ArrayContainer<T>) => T[];
 };

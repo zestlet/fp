@@ -18,6 +18,10 @@ function pluckImpl<T extends Record<PropertyKey, unknown>, const K extends keyof
  * pluck('name')(array); // ['John', 'Jane']
  */
 export const pluck = curry(pluckImpl) as {
-  <T extends Record<PropertyKey, unknown>, const K extends keyof T>(key: K, array: readonly T[]): T[K][];
-  <T extends Record<PropertyKey, unknown>, const K extends keyof T>(key: K): <T2 extends T>(array: readonly T2[]) => T2[K][];
+  <const K extends PropertyKey, T extends readonly { [P in K]?: unknown }[]>(key: K, array: T): Pluck<T, K>;
+  <const K extends PropertyKey>(key: K): <T extends readonly { [P in K]?: unknown }[]>(array: T) => Pluck<T, K>;
+};
+
+type Pluck<T extends readonly { [P in K]?: unknown }[], K extends PropertyKey> = {
+  [I in keyof T]: T[I] extends { [P in K]?: unknown } ? T[I][K] : never;
 };

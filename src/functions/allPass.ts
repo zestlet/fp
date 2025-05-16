@@ -1,7 +1,6 @@
 import { curry } from './curry';
 import { Predicate } from '../shared/types/Common';
 import { ArrayContainer } from '../shared/types/Array';
-import { AnyFunction, GenericFunction } from '../shared/types/Function';
 
 function allPassImpl<T>(predicates: ArrayContainer<Predicate<T>>, value: T): boolean {
   return predicates.every(predicate => predicate(value));
