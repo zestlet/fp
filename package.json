@@ -37,7 +37,8 @@
     "coverage": "vitest run --coverage",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
-    "check": "tsc --noEmit --project tsconfig.check.json"
+    "check": "tsc --noEmit --project tsconfig.check.json",
+    "yalc": "pnpm build && yalc push"
   },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",

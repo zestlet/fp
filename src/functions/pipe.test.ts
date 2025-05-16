@@ -1,179 +1,99 @@
-import { describe, it, expect, expectTypeOf } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { pipe } from './pipe';
 
 describe('pipe', () => {
-  it('当没有参数时应该返回恒等函数', () => {
-    const identity = pipe();
-    expect(identity(42)).toBe(42);
-    expect(identity('hello')).toBe('hello');
-    expect(identity({ x: 1 })).toEqual({ x: 1 });
-  });
-
-  it('当只有一个函数时应该返回该函数', () => {
-    const double = (x: number) => x * 2;
-    const piped = pipe(double);
-    expect(piped(5)).toBe(10);
-  });
-
-  it('应该正确组合两个函数', () => {
-    const double = (x: number) => x * 2;
+  // 基本功能测试
+  it('should pass data through a single function', () => {
     const addOne = (x: number) => x + 1;
-    const piped = pipe(double, addOne);
-    expect(piped(5)).toBe(11);
+    const result = pipe(1, addOne);
+    expect(result).toBe(2);
   });
 
-  it('应该支持不同类型的函数组合', () => {
+  it('should pass data through multiple functions in order', () => {
+    const addOne = (x: number) => x + 1;
+    const double = (x: number) => x * 2;
     const toString = (x: number) => x.toString();
-    const toUpperCase = (x: string) => x.toUpperCase();
-    const piped = pipe(toString, toUpperCase);
-    expect(piped(42)).toBe('42');
+
+    const result = pipe(1, addOne, double, toString);
+    expect(result).toBe('4');
   });
 
-  it('应该支持多个函数的组合', () => {
-    const double = (x: number) => x * 2;
-    const addOne = (x: number) => x + 1;
-    const toString = (x: number) => x.toString() + 'a';
-    const toUpperCase = (x: string) => x.toUpperCase();
-    const piped = pipe(double, addOne, toString, toUpperCase);
-    expect(piped(5)).toBe('11A');
+  // 类型转换测试
+  it('should handle type transformations correctly', () => {
+    const numToString = (x: number) => x.toString();
+    const stringToArray = (x: string) => x.split('');
+    const arrayToLength = (x: string[]) => x.length;
+
+    const result = pipe(123, numToString, stringToArray, arrayToLength);
+    expect(result).toBe(3);
   });
 
-  it('应该支持多参数函数', () => {
-    const add = (x: number, y: number) => x + y;
-    const double = (x: number) => x * 2;
-    const piped = pipe(add, double);
-    expect(piped(2, 3)).toBe(10);
+  // 边界情况测试
+  it('should return input when no functions are provided', () => {
+    const input = { value: 42 };
+    const result = pipe(input);
+    expect(result).toBe(input);
   });
 
-  it('应该正确处理 this 绑定', () => {
-    const obj = {
-      value: 1,
-      add(x: number) {
-        return this.value + x;
-      },
-      double(x: number) {
-        return x * 2;
-      },
+  // 复杂对象处理测试
+  it('should handle complex object transformations', () => {
+    interface User {
+      name: string;
+      age: number;
+    }
+
+    const user: User = { name: 'John', age: 30 };
+    const addTitle = (u: User) => ({ ...u, title: `Mr. ${u.name}` });
+    const calculateRetirement = (u: ReturnType<typeof addTitle>) => ({
+      ...u,
+      yearsToRetirement: 65 - u.age,
+    });
+
+    const result = pipe(user, addTitle, calculateRetirement);
+    expect(result).toEqual({
+      name: 'John',
+      age: 30,
+      title: 'Mr. John',
+      yearsToRetirement: 35,
+    });
+  });
+
+  // 数组操作测试
+  it('should handle array operations', () => {
+    const numbers = [1, 2, 3, 4, 5];
+    const double = (arr: number[]) => arr.map(x => x * 2);
+    const sum = (arr: number[]) => arr.reduce((a, b) => a + b, 0);
+    const toString = (x: number) => `Total: ${x}`;
+
+    const result = pipe(numbers, double, sum, toString);
+    expect(result).toBe('Total: 30');
+  });
+
+  // 异常处理测试
+  it('should propagate errors through the pipeline', () => {
+    const throwError = () => {
+      throw new Error('Test error');
     };
 
-    const piped = pipe(obj.add.bind(obj), obj.double);
-    expect(piped(2)).toBe(6);
+    expect(() => {
+      pipe(
+        1,
+        x => x + 1,
+        throwError,
+        x => x * 2
+      );
+    }).toThrow('Test error');
   });
 
-  it('应该支持对象转换', () => {
-    const getValue = (obj: { value: number }) => obj.value;
-    const double = (x: number) => x * 2;
-    const createObject = (x: number) => ({ result: x });
-    const piped = pipe(getValue, double, createObject);
-    expect(piped({ value: 5 })).toEqual({ result: 10 });
-  });
+  // 函数组合的类型安全测试
+  it('should maintain type safety through the pipeline', () => {
+    const addOne = (x: number) => x + 1;
+    const toString = (x: number) => x.toString();
+    const length = (x: string) => x.length;
 
-  it('应该支持数组操作', () => {
-    const sum = (arr: number[]) => arr.reduce((a, b) => a + b, 0);
-    const double = (x: number) => x * 2;
-    const piped = pipe(sum, double);
-    expect(piped([1, 2, 3, 4])).toBe(20);
-  });
-
-  it('应该支持泛型函数', () => {
-    const map =
-      <T>(fn: (x: T) => T) =>
-      (arr: T[]): T[] =>
-        arr.map(fn);
-    const filter =
-      <T>(predicate: (x: T) => boolean) =>
-      (arr: T[]): T[] =>
-        arr.filter(predicate);
-    const reduce =
-      <T>(fn: (acc: T, cur: T) => T, initial: T) =>
-      (arr: T[]): T =>
-        arr.reduce(fn, initial);
-
-    const doubleNumbers = map<number>(x => x * 2);
-    const filterEven = filter<number>(x => x % 2 === 0);
-    const sum = reduce<number>((a, b) => a + b, 0);
-
-    const piped = pipe(doubleNumbers, filterEven, sum);
-    expect(piped([1, 2, 3, 4, 5])).toBe(30); // [2,4,6,8,10] -> [2,4,6,8,10] -> 30
-
-    function identity<T>(): (x: T) => T;
-    function identity<T>(x: T): T;
-    function identity<T>(x?: T) {
-      if (arguments.length === 0) {
-        return (x: T) => x;
-      }
-      return x as T;
-    }
-    const stringPiped = pipe(
-      identity<string[]>(),
-      map(x => x.toUpperCase()),
-      filter(x => x.length > 3),
-      reduce((a, b) => a + b, '')
-    );
-    expect(stringPiped(['hi', 'hello', 'hey', 'world'])).toBe('HELLOWORLD');
-  });
-
-  it('空pipe入参情况', () => {
-    const piped = pipe();
-    expect(piped(42)).toBe(42);
-    expect(piped('hello')).toBe('hello');
-    expect(piped({ x: 1 })).toEqual({ x: 1 });
-  });
-
-  it('单个入参情况', () => {
-    const piped = pipe(x => x);
-    expect(piped(42)).toBe(42);
-    expect(piped('hello')).toBe('hello');
-    expect(piped({ x: 1 })).toEqual({ x: 1 });
-  });
-
-  it('小于20个入参情况', () => {
-    const piped = pipe(
-      <T>(x: T) => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x
-    );
-    expect(piped(42)).toBe(42);
-    expect(piped('hello')).toBe('hello');
-    expect(piped({ x: 1 })).toEqual({ x: 1 });
-  });
-
-  it('大于20个入参情况', () => {
-    const piped = pipe(
-      <T extends number>(_: T) => 1,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      (x: number) => x + 1,
-      x => x + 1
-    );
-
-    expectTypeOf<ReturnType<typeof piped>>().toBeAny();
-    expect(piped(42)).toBe(3);
+    // 这个测试主要是为了验证类型系统，如果能编译通过就说明类型是安全的
+    const result = pipe(1, addOne, toString, length);
+    expect(typeof result).toBe('number');
+    expect(result).toBe(1); // "2" 的长度是 1
   });
 });

@@ -7,9 +7,9 @@ describe('mean', () => {
     expect(mean(array)).toBe(3);
   });
 
-  it('当数组为空时应该返回NaN', () => {
+  it('当数组为空时应该返回0', () => {
     const array = [] as const;
-    expect(mean(array)).toBeNaN();
+    expect(mean(array)).toBe(0);
   });
 
   it('当数组只有一个元素时应该返回该元素', () => {

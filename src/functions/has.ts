@@ -21,6 +21,6 @@ function hasImpl<T, K extends keyof T>(prop: K, obj: T): boolean {
  * has(sym, objWithSymbol); // true
  */
 export const has = curry(hasImpl) as {
-  <T, K>(prop: keyof T, obj: T): boolean;
-  <K extends PropertyKey>(prop: K): <T>(obj: T) => boolean;
+  <T, K>(prop: unknown, obj: T): K extends keyof T ? true : false;
+  <K extends PropertyKey>(prop: K): <T>(obj: T) => K extends keyof T ? true : false;
 };

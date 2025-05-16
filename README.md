@@ -2,6 +2,8 @@
 
 A modern TypeScript functional programming utility library built with AI assistance, focusing on precise type inference and currying support.
 
+> This is currently in testing and subject to change, please proceed with caution.
+
 ## AI-Assisted Development Approach
 
 This library is built using an AI-assisted development method:
@@ -34,7 +36,7 @@ pnpm add @zestlet/fp
 ## Usage Example
 
 ```typescript
-import { filter, map, path, pipe, pluck, prop, sortBy } from '@zestlet/fp';
+import { filter, map, path, flow, pluck, prop, sortBy } from '@zestlet/fp';
 
 const getNamesByCompose = map(prop('name'));
 // const getNamesByCompose: <T, K2 extends keyof T & "name">(array: ArrayContainer<T>) => T[K2][]
@@ -54,7 +56,7 @@ const namesByCompose = getNamesByCompose(example);
 // const namesByCompose: ("Alice" | "Bob")[]
 
 // Getting all valid order customer names, sorted by name
-const getSortedCustomerNames = pipe(
+const getSortedCustomerNames = flow(
   filter(path(['status', 'isValid'])),
   map(path(['customer', 'name'])),
   sortBy((a: string) => a.toLowerCase())
@@ -80,7 +82,7 @@ Unlike other functional libraries, fp-ts-utils implements a sophisticated type i
 
 ```typescript
 // The library maintains type information throughout the entire chain
-const getNames = pipe(
+const getNames = flow(
   filter((user: User) => user.active),
   map(user => user.name),
   map(name => name.toUpperCase())
@@ -107,7 +109,7 @@ Functions follow the data-last convention, making them ideal for composition:
 
 ```typescript
 // Data parameter comes last, facilitating composition
-const processNumbers = pipe(
+const processNumbers = flow(
   filter(x => x > 0),
   map(x => x * 2),
   reduce((acc, x) => acc + x, 0)
