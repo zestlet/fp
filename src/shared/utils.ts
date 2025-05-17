@@ -18,6 +18,7 @@ export const ObjectTags = {
   Int16Array: '[object Int16Array]',
   Uint16Array: '[object Uint16Array]',
   Int32Array: '[object Int32Array]',
+  Uint32Array: '[object Uint32Array]',
   Float32Array: '[object Float32Array]',
   Float64Array: '[object Float64Array]',
   BigInt64Array: '[object BigInt64Array]',

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { pipeAsync } from './pipeAsync';
+import { flowAsync } from './flowAsync';
 
-describe('pipeAsync', () => {
+describe('flowAsync', () => {
   it('当没有参数时应该返回一个返回输入值的异步函数', async () => {
-    const fn = pipeAsync();
+    const fn = flowAsync();
     expect(await fn(42)).toBe(42);
     expect(await fn('hello')).toBe('hello');
     expect(await fn({ x: 1 })).toEqual({ x: 1 });
@@ -11,21 +11,21 @@ describe('pipeAsync', () => {
 
   it('当只有一个函数时应该返回该函数', async () => {
     const double = async (x: number) => x * 2;
-    const fn = pipeAsync(double);
+    const fn = flowAsync(double);
     expect(await fn(5)).toBe(10);
   });
 
   it('应该正确组合两个异步函数', async () => {
     const double = async (x: number) => x * 2;
     const addOne = async (x: number) => x + 1;
-    const fn = pipeAsync(double, addOne);
+    const fn = flowAsync(double, addOne);
     expect(await fn(5)).toBe(11);
   });
 
   it('应该支持不同类型的异步函数组合', async () => {
     const toString = async (x: number) => x.toString();
     const toUpperCase = async (x: string) => x.toUpperCase();
-    const fn = pipeAsync(toString, toUpperCase);
+    const fn = flowAsync(toString, toUpperCase);
     expect(await fn(42)).toBe('42');
   });
 
@@ -34,14 +34,14 @@ describe('pipeAsync', () => {
     const addOne = async (x: number) => x + 1;
     const toString = async (x: number) => x.toString();
     const toUpperCase = async (x: string) => x.toUpperCase();
-    const fn = pipeAsync(double, addOne, toString, toUpperCase);
+    const fn = flowAsync(double, addOne, toString, toUpperCase);
     expect(await fn(5)).toBe('11');
   });
 
   it('应该支持柯里化的异步函数', async () => {
     const add = (x: number) => async (y: number) => x + y;
     const double = async (x: number) => x * 2;
-    const fn = pipeAsync(add(3), double);
+    const fn = flowAsync(add(3), double);
     expect(await fn(2)).toBe(10);
   });
 
@@ -56,7 +56,7 @@ describe('pipeAsync', () => {
       },
     };
 
-    const fn = pipeAsync(obj.add.bind(obj), obj.double);
+    const fn = flowAsync(obj.add.bind(obj), obj.double);
     expect(await fn(2)).toBe(6);
   });
 
@@ -64,14 +64,14 @@ describe('pipeAsync', () => {
     const getValue = async (obj: { value: number }) => obj.value;
     const double = async (x: number) => x * 2;
     const createObject = async (x: number) => ({ result: x });
-    const fn = pipeAsync(getValue, double, createObject);
+    const fn = flowAsync(getValue, double, createObject);
     expect(await fn({ value: 5 })).toEqual({ result: 10 });
   });
 
   it('应该支持数组操作', async () => {
     const sum = async (arr: number[]) => arr.reduce((a, b) => a + b, 0);
     const double = async (x: number) => x * 2;
-    const fn = pipeAsync(sum, double);
+    const fn = flowAsync(sum, double);
     expect(await fn([1, 2, 3, 4])).toBe(20);
   });
 
@@ -93,14 +93,14 @@ describe('pipeAsync', () => {
     const filterEven = filter<number>(x => x % 2 === 0);
     const sum = reduce<number>((a, b) => a + b, 0);
 
-    const fn = pipeAsync(doubleNumbers, filterEven, sum);
+    const fn = flowAsync(doubleNumbers, filterEven, sum);
     expect(await fn([1, 2, 3, 4, 5])).toBe(30);
   });
 
   it('应该支持超过20个函数的组合', async () => {
     const identity = async <T>(x: T) => x;
     const addOne = async (x: number) => x + 1;
-    const fn = pipeAsync(
+    const fn = flowAsync(
       identity,
       identity,
       identity,
@@ -130,7 +130,7 @@ describe('pipeAsync', () => {
     const throwError = async () => {
       throw new Error('test error');
     };
-    const fn = pipeAsync(throwError);
+    const fn = flowAsync(throwError);
     await expect(fn()).rejects.toThrow('test error');
   });
 });

@@ -340,6 +340,18 @@ export function isEmptyArray(value: unknown): value is unknown[] {
 }
 
 /**
+ * Checks if a value is an empty object.
+ * @param value The value to check
+ * @returns true if the value is an empty object
+ * @example
+ * isEmptyObject({}) // true
+ * isEmptyObject({ a: 1 }) // false
+ */
+export function isEmptyObject(value: unknown): value is Record<string, unknown> {
+  return isPlainObject(value) && Object.keys(value).length === 0;
+}
+
+/**
  * Checks if a value is a blank string.
  * @param value The value to check
  * @returns true if the value is a blank string

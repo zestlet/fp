@@ -1,7 +1,7 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
 import { flow } from './flow';
 
-describe('pipe', () => {
+describe('flow', () => {
   it('当没有参数时应该返回恒等函数', () => {
     const identity = flow();
     expect(identity(42)).toBe(42);
@@ -11,22 +11,22 @@ describe('pipe', () => {
 
   it('当只有一个函数时应该返回该函数', () => {
     const double = (x: number) => x * 2;
-    const piped = flow(double);
-    expect(piped(5)).toBe(10);
+    const flowed = flow(double);
+    expect(flowed(5)).toBe(10);
   });
 
   it('应该正确组合两个函数', () => {
     const double = (x: number) => x * 2;
     const addOne = (x: number) => x + 1;
-    const piped = flow(double, addOne);
-    expect(piped(5)).toBe(11);
+    const flowed = flow(double, addOne);
+    expect(flowed(5)).toBe(11);
   });
 
   it('应该支持不同类型的函数组合', () => {
     const toString = (x: number) => x.toString();
     const toUpperCase = (x: string) => x.toUpperCase();
-    const piped = flow(toString, toUpperCase);
-    expect(piped(42)).toBe('42');
+    const flowed = flow(toString, toUpperCase);
+    expect(flowed(42)).toBe('42');
   });
 
   it('应该支持多个函数的组合', () => {
@@ -34,15 +34,15 @@ describe('pipe', () => {
     const addOne = (x: number) => x + 1;
     const toString = (x: number) => x.toString() + 'a';
     const toUpperCase = (x: string) => x.toUpperCase();
-    const piped = flow(double, addOne, toString, toUpperCase);
-    expect(piped(5)).toBe('11A');
+    const flowed = flow(double, addOne, toString, toUpperCase);
+    expect(flowed(5)).toBe('11A');
   });
 
   it('应该支持多参数函数', () => {
     const add = (x: number, y: number) => x + y;
     const double = (x: number) => x * 2;
-    const piped = flow(add, double);
-    expect(piped(2, 3)).toBe(10);
+    const flowed = flow(add, double);
+    expect(flowed(2, 3)).toBe(10);
   });
 
   it('应该正确处理 this 绑定', () => {
@@ -56,23 +56,23 @@ describe('pipe', () => {
       },
     };
 
-    const piped = flow(obj.add.bind(obj), obj.double);
-    expect(piped(2)).toBe(6);
+    const flowed = flow(obj.add.bind(obj), obj.double);
+    expect(flowed(2)).toBe(6);
   });
 
   it('应该支持对象转换', () => {
     const getValue = (obj: { value: number }) => obj.value;
     const double = (x: number) => x * 2;
     const createObject = (x: number) => ({ result: x });
-    const piped = flow(getValue, double, createObject);
-    expect(piped({ value: 5 })).toEqual({ result: 10 });
+    const flowed = flow(getValue, double, createObject);
+    expect(flowed({ value: 5 })).toEqual({ result: 10 });
   });
 
   it('应该支持数组操作', () => {
     const sum = (arr: number[]) => arr.reduce((a, b) => a + b, 0);
     const double = (x: number) => x * 2;
-    const piped = flow(sum, double);
-    expect(piped([1, 2, 3, 4])).toBe(20);
+    const flowed = flow(sum, double);
+    expect(flowed([1, 2, 3, 4])).toBe(20);
   });
 
   it('应该支持泛型函数', () => {
@@ -93,8 +93,8 @@ describe('pipe', () => {
     const filterEven = filter<number>(x => x % 2 === 0);
     const sum = reduce<number>((a, b) => a + b, 0);
 
-    const piped = flow(doubleNumbers, filterEven, sum);
-    expect(piped([1, 2, 3, 4, 5])).toBe(30); // [2,4,6,8,10] -> [2,4,6,8,10] -> 30
+    const flowed = flow(doubleNumbers, filterEven, sum);
+    expect(flowed([1, 2, 3, 4, 5])).toBe(30); // [2,4,6,8,10] -> [2,4,6,8,10] -> 30
 
     function identity<T>(): (x: T) => T;
     function identity<T>(x: T): T;
@@ -104,31 +104,31 @@ describe('pipe', () => {
       }
       return x as T;
     }
-    const stringPiped = flow(
+    const stringflowed = flow(
       identity<string[]>(),
       map(x => x.toUpperCase()),
       filter(x => x.length > 3),
       reduce((a, b) => a + b, '')
     );
-    expect(stringPiped(['hi', 'hello', 'hey', 'world'])).toBe('HELLOWORLD');
+    expect(stringflowed(['hi', 'hello', 'hey', 'world'])).toBe('HELLOWORLD');
   });
 
   it('空pipe入参情况', () => {
-    const piped = flow();
-    expect(piped(42)).toBe(42);
-    expect(piped('hello')).toBe('hello');
-    expect(piped({ x: 1 })).toEqual({ x: 1 });
+    const flowed = flow();
+    expect(flowed(42)).toBe(42);
+    expect(flowed('hello')).toBe('hello');
+    expect(flowed({ x: 1 })).toEqual({ x: 1 });
   });
 
   it('单个入参情况', () => {
-    const piped = flow(x => x);
-    expect(piped(42)).toBe(42);
-    expect(piped('hello')).toBe('hello');
-    expect(piped({ x: 1 })).toEqual({ x: 1 });
+    const flowed = flow(x => x);
+    expect(flowed(42)).toBe(42);
+    expect(flowed('hello')).toBe('hello');
+    expect(flowed({ x: 1 })).toEqual({ x: 1 });
   });
 
   it('小于20个入参情况', () => {
-    const piped = flow(
+    const flowed = flow(
       <T>(x: T) => x,
       x => x,
       x => x,
@@ -140,13 +140,13 @@ describe('pipe', () => {
       x => x,
       x => x
     );
-    expect(piped(42)).toBe(42);
-    expect(piped('hello')).toBe('hello');
-    expect(piped({ x: 1 })).toEqual({ x: 1 });
+    expect(flowed(42)).toBe(42);
+    expect(flowed('hello')).toBe('hello');
+    expect(flowed({ x: 1 })).toEqual({ x: 1 });
   });
 
   it('大于20个入参情况', () => {
-    const piped = flow(
+    const flowed = flow(
       <T extends number>(_: T) => 1,
       x => x,
       x => x,
@@ -173,7 +173,7 @@ describe('pipe', () => {
       x => x + 1
     );
 
-    expectTypeOf<ReturnType<typeof piped>>().toBeAny();
-    expect(piped(42)).toBe(3);
+    expectTypeOf<ReturnType<typeof flowed>>().toBeAny();
+    expect(flowed(42)).toBe(3);
   });
 });

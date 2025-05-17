@@ -1,6 +1,6 @@
 {
   "name": "@zestlet/fp",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "TypeScript functional programming library with over 70% AI-generated code, featuring precise type inference and currying support",
   "publishConfig": {
     "access": "public",

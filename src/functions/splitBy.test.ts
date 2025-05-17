@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { splitBy } from './spiltBy';
+import { splitBy } from './splitBy';
 
 describe('partition', () => {
   it('应该根据断言函数将数组分成两部分', () => {

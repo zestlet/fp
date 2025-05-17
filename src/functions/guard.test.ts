@@ -27,6 +27,7 @@ import {
   isPositiveInfinity,
   isEmptyString,
   isEmptyArray,
+  isEmptyObject,
   isBlankString,
   isNumeric,
   isAlpha,
@@ -298,6 +299,14 @@ describe('Guard functions', () => {
       expect(isEmptyArray([1])).toBe(false);
       expect(isEmptyArray({})).toBe(false);
       expect(isEmptyArray(null)).toBe(false);
+    });
+  });
+
+  describe('isEmptyObject', () => {
+    it('应该正确识别空对象', () => {
+      expect(isEmptyObject({})).toBe(true);
+      expect(isEmptyObject({ a: 1 })).toBe(false);
+      expect(isEmptyObject(null)).toBe(false);
     });
   });
 

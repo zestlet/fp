@@ -1,7 +1,7 @@
 import { getObjectTag, ObjectTags } from '../shared/utils';
 import { isNaN } from './guard';
 
-function isEqualFn(a: any, b: any, visited = new Map()) {
+function isEqualFn(a: any, b: any, visited = new WeakMap()) {
   // 1. 严格相同 (相同引用、多数原始类型、null、undefined)
   if (a === b) {
     return true;
@@ -153,6 +153,7 @@ function isEqualFn(a: any, b: any, visited = new Map()) {
     case ObjectTags.Int16Array:
     case ObjectTags.Uint16Array:
     case ObjectTags.Int32Array:
+    case ObjectTags.Uint32Array:
     case ObjectTags.Float32Array:
     case ObjectTags.Float64Array:
     case ObjectTags.BigInt64Array:
