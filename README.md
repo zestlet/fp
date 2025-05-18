@@ -74,68 +74,6 @@ const customerNames = getSortedCustomerNames(orders);
 console.log(customerNames); // [ "Alice", "Dave" ]
 ```
 
-## Core Design Principles
-
-### Advanced Type Inference
-
-Unlike other functional libraries, fp-ts-utils implements a sophisticated type inheritance system that enables precise type inference in point-free compositions:
-
-```typescript
-// The library maintains type information throughout the entire chain
-const getNames = flow(
-  filter((user: User) => user.active),
-  map(user => user.name),
-  map(name => name.toUpperCase())
-);
-
-// TypeScript correctly infers: (users: User[]) => string[]
-```
-
-### Curried Functions with Type Overloads
-
-All multi-parameter functions support fully type-safe currying:
-
-```typescript
-// All these calling styles have correct type inference
-const result1 = map(x => x * 2, [1, 2, 3]);
-const result2 = map(x => x * 2)([1, 2, 3]);
-const mapDouble = map(x => x * 2);
-const result3 = mapDouble([1, 2, 3]);
-```
-
-### Data-Last Parameter Order
-
-Functions follow the data-last convention, making them ideal for composition:
-
-```typescript
-// Data parameter comes last, facilitating composition
-const processNumbers = flow(
-  filter(x => x > 0),
-  map(x => x * 2),
-  reduce((acc, x) => acc + x, 0)
-);
-
-// Apply the composed function to data
-processNumbers([-1, 2, 3, 4]); // 18
-```
-
-## Comparison with Other Libraries
-
-| Feature                   | fp-ts-utils           | lodash/fp      | ramda              |
-| ------------------------- | --------------------- | -------------- | ------------------ |
-| Currying                  | ✅ Automatic          | ✅ Automatic   | ✅ Automatic       |
-| TypeScript                | ✅ Advanced inference | ⚠️ Basic types | ⚠️ Community types |
-| Point-free type inference | ✅ Precise inference  | ⚠️ Limited     | ⚠️ Limited         |
-
-## Type System Features
-
-The type system leverages advanced TypeScript features:
-
-- Continuous generic type inheritance (`T2 extends T`)
-- Strategic const modifier placement for literal type preservation
-- Optimized generic parameter declarations for maximum inference
-- Complete support for data-last style delayed type inference
-
 ## License
 
 MIT
