@@ -1,10 +1,10 @@
 import { curry } from './curry';
 import { ArrayContainer } from '../shared/types/Array';
 
-function sortByImpl<T, U>(fn: (item: T) => U, array: ArrayContainer<T>): T[] {
+function sortByImpl<T, U extends number | undefined>(fn: (item: T) => U, array: ArrayContainer<T>): T[] {
   return [...array].sort((a, b) => {
-    const aValue = fn(a);
-    const bValue = fn(b);
+    const aValue = fn(a) ?? 0;
+    const bValue = fn(b) ?? 0;
     return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
   });
 }
@@ -22,6 +22,6 @@ function sortByImpl<T, U>(fn: (item: T) => U, array: ArrayContainer<T>): T[] {
  * sortBy(x => x.id)(array); // [{id: 1}, {id: 2}, {id: 3}]
  */
 export const sortBy = curry(sortByImpl) as {
-  <T, U>(fn: (item: T) => U, array: ArrayContainer<T>): T[];
-  <T, U>(fn: (item: T) => U): (array: ArrayContainer<T>) => T[];
+  <T, U extends number | undefined>(fn: (item: T) => U, array: ArrayContainer<T>): T[];
+  <T, U extends number | undefined>(fn: (item: T) => U): (array: ArrayContainer<T>) => T[];
 };

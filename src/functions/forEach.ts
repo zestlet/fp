@@ -20,5 +20,5 @@ function forEachImpl<T>(callbackFn: ArrayCallback<T, unknown>, array: ArrayConta
  */
 export const forEach = curry(forEachImpl) as {
   <T>(callbackFn: ArrayCallback<T, unknown>, array: ArrayContainer<T>): ArrayContainer<T>;
-  <T>(callbackFn: ArrayCallback<T, unknown>): <T2 extends T>(array: ArrayContainer<T2>) => ArrayContainer<T2>;
+  <T>(callbackFn: ArrayCallback<T, unknown>): (array: ArrayContainer<T>) => ArrayContainer<T>;
 };

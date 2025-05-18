@@ -97,35 +97,6 @@ describe('flowAsync', () => {
     expect(await fn([1, 2, 3, 4, 5])).toBe(30);
   });
 
-  it('应该支持超过20个函数的组合', async () => {
-    const identity = async <T>(x: T) => x;
-    const addOne = async (x: number) => x + 1;
-    const fn = flowAsync(
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      identity,
-      addOne
-    );
-    expect(await fn(0)).toBe(1);
-  });
-
   it('应该正确处理异步函数中的错误', async () => {
     const throwError = async () => {
       throw new Error('test error');

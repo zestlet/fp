@@ -1,4 +1,4 @@
-import type { LastFn, Awaitable, AwaitableFunction } from '../shared/types/Function';
+import type { Awaitable, AwaitableFunction } from '../shared/types/Function';
 
 export function flowAsync(): <T>(x: T) => Awaitable<T>;
 export function flowAsync<R1 extends AwaitableFunction>(f1: R1): R1;
@@ -292,10 +292,6 @@ export function flowAsync<
   f19: AwaitableFunction<[Awaited<R18>], R19>,
   f20: AwaitableFunction<[Awaited<R19>], R20>
 ): AwaitableFunction<Args, R20>;
-
-export function flowAsync<Args extends readonly any[], Fns extends readonly AwaitableFunction[]>(
-  ...fns: Fns
-): AwaitableFunction<Args, ReturnType<LastFn<Fns>>>;
 export function flowAsync(...fns: any[]): any {
   if (fns.length === 0) {
     return async <T>(x: T) => x;

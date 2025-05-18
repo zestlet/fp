@@ -144,36 +144,4 @@ describe('flow', () => {
     expect(flowed('hello')).toBe('hello');
     expect(flowed({ x: 1 })).toEqual({ x: 1 });
   });
-
-  it('大于20个入参情况', () => {
-    const flowed = flow(
-      <T extends number>(_: T) => 1,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      x => x,
-      (x: number) => x + 1,
-      x => x + 1
-    );
-
-    expectTypeOf<ReturnType<typeof flowed>>().toBeAny();
-    expect(flowed(42)).toBe(3);
-  });
 });

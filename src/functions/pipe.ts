@@ -259,8 +259,6 @@ export function pipe<Data, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R1
   f19: (arg: R18) => R19,
   f20: (arg: R19) => R20
 ): R20;
-
-export function pipe<Data, Fns extends readonly AnyFunction[]>(data: Data, ...fns: Fns): ReturnType<LastFn<Fns>>;
 export function pipe(data: any, ...fns: AnyFunction[]): AnyFunction {
   if (fns.length === 0) {
     return data;

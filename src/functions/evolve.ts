@@ -1,13 +1,15 @@
-import { Prettify } from '../shared/types/Common';
 import { curry } from './curry';
+import * as Z from '../index';
+
+type IsArray<T> = T extends any[] ? true : false;
 
 type Transformer<T, R = T> = (input: T) => R;
-
-/**
- * 递归转换映射类型
- */
 type TransformMap<T> = {
-  [K in keyof T]?: T[K] extends object ? TransformMap<T[K]> | Transformer<T[K]> : Transformer<T[K]>;
+  [K in keyof T]?: T[K] extends object
+    ? IsArray<T[K]> extends true
+      ? Transformer<T[K]>
+      : TransformMap<T[K]> | Transformer<T[K]>
+    : Transformer<T[K]>;
 };
 
 /**
@@ -84,8 +86,6 @@ function evolveImpl<T extends object, TF extends TransformMap<T>>(transformation
  * // }
  */
 export const evolve = curry(evolveImpl) as {
-  <T extends object, TF extends TransformMap<T>>(transformations: TF, obj: T): Prettify<Evolved<T, TF>>;
-  <T extends object, TF extends TransformMap<T>>(
-    transformations: TF
-  ): <T2 extends T, TF2 extends TransformMap<T2>>(obj: T2) => Prettify<Evolved<T2, TF2>>;
+  <const T, TF extends TransformMap<T>>(transformations: TF, obj: T): Evolved<T, TF>;
+  <const T, TF extends TransformMap<T>>(transformations: TF): <T2 extends T, TF2 extends TransformMap<T2>>(obj: T2) => Evolved<T2, TF2>;
 };

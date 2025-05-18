@@ -1,6 +1,6 @@
 import { curry } from './curry';
 
-function pickImpl<T extends Record<PropertyKey, unknown>, K extends PropertyKey>(keys: readonly (K | keyof T)[], obj: T): Pick<T, K> {
+function pickImpl<T extends Record<PropertyKey, any>, K extends PropertyKey>(keys: readonly (K | keyof T)[], obj: T): Pick<T, K> {
   return keys.reduce(
     (acc, key) => {
       if (key in obj) {
@@ -25,6 +25,6 @@ function pickImpl<T extends Record<PropertyKey, unknown>, K extends PropertyKey>
  * pick(['name'])(obj); // { name: 'John' }
  */
 export const pick = curry(pickImpl) as {
-  <T extends Record<PropertyKey, unknown>, K extends PropertyKey>(keys: readonly (K | keyof T)[], obj: T): Pick<T, K>;
-  <T extends Record<PropertyKey, unknown>, K extends PropertyKey>(keys: readonly (K | keyof T)[]): <T2 extends T>(obj: T2) => Pick<T2, K>;
+  <T extends Record<PropertyKey, any>, K extends PropertyKey>(keys: readonly (K | keyof T)[], obj: T): Pick<T, K>;
+  <T extends Record<PropertyKey, any>, K extends PropertyKey>(keys: readonly (K | keyof T)[]): <T2 extends T>(obj: T2) => Pick<T2, K>;
 };

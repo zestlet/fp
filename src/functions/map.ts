@@ -18,6 +18,6 @@ function mapImpl<T, U>(callbackFn: ArrayCallback<T, U>, array: ArrayContainer<T>
  * map(x => x.toString())(array); // ['1', '2', '3', '4', '5']
  */
 export const map = curry(mapImpl) as {
-  <T, U>(callbackFn: (item: T, index: number, array: ArrayContainer<T>) => U, array: ArrayContainer<T>): U[];
-  <T, U>(callbackFn: (item: T, index: number, array: ArrayContainer<T>) => U): (array: ArrayContainer<T>) => U[];
+  <T, U>(callbackFn: ArrayCallback<T, U>, array: ArrayContainer<T>): U[];
+  <T, U>(callbackFn: ArrayCallback<T, U>): (array: ArrayContainer<T>) => U[];
 };

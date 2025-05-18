@@ -4,11 +4,10 @@ import { ArrayContainer } from '../shared/types/Array';
  * Constant array containing all falsy values
  */
 export const FALSY_VALUES = [false, null, 0, -0, 0n, '', undefined, NaN] as const;
-
-type FilterFalsy<T> = T extends typeof FALSY_VALUES ? never : T;
+type FALSY_VALUES_SAFE = false | null | 0 | '' | undefined | 0n;
 type Compact<T extends readonly any[]> = {
-  [K in keyof T]: FilterFalsy<T[K]>;
-}[number][];
+  [K in keyof T]: Exclude<T[K], FALSY_VALUES_SAFE>;
+};
 
 function compactImpl<T>(array: ArrayContainer<T>): Compact<T[]> {
   return array.filter(item => !FALSY_VALUES.includes(item as any)) as Compact<T[]>;

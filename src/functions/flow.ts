@@ -1,4 +1,4 @@
-import type { AnyFunction, LastFn } from '../shared/types/Function';
+import type { AnyFunction } from '../shared/types/Function';
 
 export function flow(): <T>(x: T) => T;
 export function flow<A extends AnyFunction>(a: A): A;
@@ -268,11 +268,6 @@ export function flow<
   f19: (arg: R18) => R19,
   f20: (arg: R19) => R20
 ): (...arg: Args) => R20;
-
-export function flow<Args extends readonly any[], Fns extends readonly AnyFunction[]>(
-  f1: (...args: Args) => any,
-  ...fns: Fns
-): (...args: Args) => ReturnType<LastFn<Fns>>;
 export function flow(...fns: AnyFunction[]): AnyFunction {
   if (fns.length === 0) {
     return (x: unknown) => x;

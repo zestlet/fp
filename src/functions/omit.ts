@@ -1,6 +1,6 @@
 import { curry } from './curry';
 
-function omitImpl<T extends Record<PropertyKey, unknown>, K extends PropertyKey>(keys: readonly (K | keyof T)[], obj: T): Omit<T, K> {
+function omitImpl<T extends Record<PropertyKey, any>, K extends PropertyKey>(keys: readonly (K | keyof T)[], obj: T): Omit<T, K> {
   const keySet = new Set(keys);
   return Object.entries(obj).reduce(
     (acc, [key, value]) => {
@@ -26,6 +26,6 @@ function omitImpl<T extends Record<PropertyKey, unknown>, K extends PropertyKey>
  * omit(['name', 'city'])(obj); // { age: 30 }
  */
 export const omit = curry(omitImpl) as {
-  <T extends Record<PropertyKey, unknown>, K extends PropertyKey>(keys: readonly (K | keyof T)[], obj: T): Omit<T, K>;
-  <T extends Record<PropertyKey, unknown>, K extends PropertyKey>(keys: readonly (K | keyof T)[]): <T2 extends T>(obj: T2) => Omit<T2, K>;
+  <T extends Record<PropertyKey, any>, K extends PropertyKey>(keys: readonly (K | keyof T)[], obj: T): Omit<T, K>;
+  <T extends Record<PropertyKey, any>, K extends PropertyKey>(keys: readonly (K | keyof T)[]): <T2 extends T>(obj: T2) => Omit<T2, K>;
 };
